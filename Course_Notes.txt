@@ -1,0 +1,1029 @@
+---------------------------------------- Deployment of Machine Learning Models -------------------
+
+
+%----------------------------- Section 1: Introduction -------------------------------%
+
+# Go to Anaconda Powershell Command Prompt and open below;
+# Optional: First To install correct version of python 
+ 
+(base) PS D:\Django_and_Python\djangoEnv> conda create --name MLModelEnv python=3.10
+(base) PS D:\Django_and_Python\djangoEnv> conda activate MLModelEnv
+(MLModelEnv) D:\Django_and_Python\djangoEnv> conda deactivate MLModelEnv
+
+# To find the list of conda environment
+(base) PS D:\Django_and_Python\djangoEnv> conda info --envs
+
+(base) PS C:\WINDOWS\system32> conda env list
+# conda environments:
+#
+                         C:\Users\Owner\Anaconda3
+base                  *  C:\Users\Owner\anaconda3
+DjangoPrjectEnv          C:\Users\Owner\anaconda3\envs\DjangoPrjectEnv
+TensorFlowEnv            C:\Users\Owner\anaconda3\envs\TensorFlowEnv
+dbtEnv                   C:\Users\Owner\anaconda3\envs\dbtEnv
+intro-to-mongodb         C:\Users\Owner\anaconda3\envs\intro-to-mongodb
+myDjangoEnv              C:\Users\Owner\anaconda3\envs\myDjangoEnv
+quantum_compute          C:\Users\Owner\anaconda3\envs\quantum_compute
+
+
+(base) PS C:\WINDOWS\system32> conda create --name apacheSpark-env python=3.10
+
+(base) PS C:\WINDOWS\system32> conda create --name apacheSpark-env python=3.10
+#
+# To activate this environment, use
+#
+#     $ conda activate apacheSpark-env
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+(base) PS C:\WINDOWS\system32> conda activate apacheSpark-env
+(apacheSpark-env) PS C:\WINDOWS\system32>
+(apacheSpark-env) PS D:\Data_Engineering\PySpark\projects> pip install pyspark
+(apacheSpark-env) PS D:\Data_Engineering\PySpark\projects> pip install findspark
+(apacheSpark-env) PS D:\Data_Engineering\PySpark\projects> pip install jupyterlab
+
+## Install pyspark, JupyterLab;
+
+
+(.pyspark-env) D:\Data_Engineering\PySpark> pip install pyspark
+
+(.pyspark-env) D:\Data_Engineering\PySpark> pip install findspark
+
+(.pyspark-env) D:\Data_Engineering\PySpark> pip install jupyterlab
+
+ 
+## Launch JupyterLab and use PySpark;
+
+(apacheSpark-env) PS D:\Data_Engineering\PySpark\projects> jupyter-lab
+
+http://localhost:8888/lab
+
+------------------------------------------ ML ------------------------
+
+## Machine Learning Models
+-  Linear Regression
+- Tree Based Algorithms
+
+## Model evaluation
+- Mean Squared error
+- R^2
+- ROC-AUC
+
+## Feature Engineering & Selection
+
+----------------------------------------------------------------------
+
+
+https://www.kaggle.com/
+
+## Course Materials;
+
+https://github.com/trainindata/deploying-machine-learning-models
+
+Fork the repo
+
+
+Navigate to the repo in your browser
+
+Click on the button in the top right corner that says "fork" (see image below)
+
+Done
+
+This will create a copy of this repository in your Github account.
+
+Cloning the "forked" repo
+
+You can clone the "forked" repo, which is now located in your Github account, from the mac terminal or windows command line interface 
+with this command:
+
+git clone https://github.com/<YOUR_USERNAME>/deploying-machine-learning-models
+
+------------------------------------------------------------------------------------------------------
+
+https://www.kaggle.com/
+
+Download Dataset
+Download House Prices data set from Kaggle
+
+
+Create a Kaggle account
+
+If you have a Kaggle account already, go straight to Download data set.
+
+Visit Kaggle's website
+
+Click on the "Create an account" button and follow the instructions to set up your account
+
+Download data set
+
+Visit the House Sale Price competition website, scroll down and click on train.csv and test.csv files (see image below) 
+and then on the download button on the right.
+
+Store the datasets somewhere safe, and we will tell you were to move them as we go along in the course.
+
+https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data
+
+
+
+%----------------------------- Section 2: Overview of Model Deployment -------------------------------%
+
+- The deployment of ML models is the process of making models available in production environments, 
+- where they can provide predictions to other softwares systems.
+- To Maximize the values of the machine learning model, we need to be able to reliably extract the predictions and share them with other systems.
+
+
+## Challenges of traditional software;
+- Reliablity
+- Reusability
+- Maintainability
+- Flexibility
+- Reproducibility
+
+## Deployment of ML Pipelines;
+- Data Format and Quality
+- Transform Variables
+- Extract Features
+- Create New Features
+
+## Research and Production Environment;
+
+
+## Building Reproducible Machine Learning Pipelines;
+
+- Financial Costs
+- Lost time
+- Lost Reputation
+
+## Challenges to Reproducibility;
+- Reproducibility is the ability to duplicate a machine learning model exactly , such that given the same raw data as input,
+- both models return the same output.
+
+=> Data Gathering => Data Analysis => Data pre-processing => Variable selection => ML Model Building => Model Deployment
+
+- Data => The most difficult challenge to reproducibility.
+## Challenges
+- Training datasets can't be reproduced
+- Databases are constantly updated and overwritten.
+- Order of data while loading is random (SQL).
+
+## Solution;
+- Save snapshot of training data.
+- Design data source with accurate timestamps.
+
+## Reproducibility during feature creation;
+
+=> Lack of reproducibility may arise from:
+- Replacing missing data with random extracted values.
+- Removing labels based on percentages of observations.
+- Calculating statistical values like the mean to use for missing value replacement.
+- More complex equations to extract features , e.g. aggregating over time.
+
+=> How to ensure reproducibility?
+- Code on how feature is generated should be tracked under version control and published with auto-incremented or timestamps hashed versions.
+- Many of the parameters extracted for feature engineering depend on the data used for training -> ensure data is reproducible.
+- If replacing by extracting random samples, always set a seed.
+
+## Reproducibility during Model Training;
+=> Challenges;
+- Machine learning models rely on randomness for training;
+ * Data and feature extraction for trees.
+ * Weight initialisation for neural nets, etc.
+
+- Machine learning model implementations work with arrays agnostic to feature names
+ * Need to be careful to feed data in the correct order
+ 
+=> Solutions;
+- Record the order of the features
+- Record applied feature transformations
+- Record hyperparameters
+- For models that require randomness always set a seed.
+- If the final model is a stack of models, record the structure of the ensemble.
+
+
+## Reproducibility during Model Deployment;
+=> Challenges:
+- A feature is not available in the live environment
+- Different programming languages
+- Different software
+- Live populations don't match those used for training.
+
+=> Solutions:
+- Software version should match exactly applications should list all third party library dependencies and their versions.
+- Use a container and track software specifications.
+- Research, develop and deploy utilising the same language , e.g python
+- Prior to building the model, understand how the model will be integrated with other systems.
+
+
+## Streamlining Model Deployment with Open Source.
+=> Challenges
+- A lot to code
+- Repetitive
+- Learn and store parameters
+- Reproducibility
+
+## Additional Reading Resources
+=> Building Reproducible Pipelines
+
+- Building and Deploying a Reproducible Machine Learning Pipeline - article
+
+https://trainindata.medium.com/how-to-build-and-deploy-a-reproducible-machine-learning-pipeline-20119c0ab941
+
+- Building a Reproducible Machine Learning Pipeline - long article
+https://www.rctatman.com/files/Tatman_2018_ReproducibleML.pdf
+https://arxiv.org/ftp/arxiv/papers/1810/1810.04570.pdf
+
+- Reproducible Machine Learning - presentation, Kaggle
+
+https://www.rctatman.com/files/Tatman_2018_ReproducibleML.pdf
+
+
+- The Machine Learning Reproducibility Crisis - article, by Google developer
+
+
+=> Streamlining Deployment with Open Source
+- Six motivations for using open source - article
+
+%----------------------------- Section 3: Machine Learning System Architecture -------------------------------%
+
+## Why it matters?
+- ML in production requires multiple different components in order to work:
+	> Infrastructure
+	> Applications
+	> Data
+	> Documentation
+	> Configuration
+
+
+## Specific Challenges Machine Learning System;
+- Data Dependencies;
+>> Models may be trained on data from many different sources e.g. a house price prediction model which takes data from:
+	* An in-house SQL database with information on recent inquires.
+	* A second in-house NoSQL data store which contains historical house listings.
+	* An external API with the latest crime statistics
+	* A base-line of features CSV prepared by a data scientist and updated on weekly basis.
+
+- Configuration Issues;
+>> Model hyperparameters, versions, requirements , data sources can all be changed and modified via config.
+>> e.g. a yaml file in your source code. Is this tested?
+
+- Data and Feature Preparation
+>> The steps required to prepare data and transform it into features for the model may be complex. e.g. a typical pipeline requires us to;
+	* Transform numerical data
+	* Transform categorical data
+	* Handle outliners
+	* Derive features from raw data
+	* Many other tasks.
+
+- Detecting Model Errors;
+>> Traditional test often do not detect errors in ML systems
+>> When you deploy a model which performs worse, no exceptions are raised. 
+>> Your API will not return any 500 status codes. Standard tests will not catch these sorts of mistakes.
+
+- Key points for Research vs Production Environments;
+>> Seperate from customer facing software
+>> Reproducibility matters
+>> Scaling challenges
+>> Can be taken offline
+>> Infrastructure planning required
+>> Difficult to run experiments
+
+
+## Key Principles for Machine Learning;
+
+Model Requirements => Data Collection => Data Cleaning => Data Labelling => Feature Engineering => Model Training => Model Evaluation => Model Deployment => Model Monitoring.
+- Automation of all stages of the ML workflow.
+
+> Reproducibility;
+ - Training is reproducible.
+ - Every model specification undergoes a code review and is checked into a repository.
+ - Models can be quickly and safely rolled back to a previous serving version.
+ 
+> Versioning;
+ - Each model is tagged with a provenance tag that explains with which data it has been trained on and which version of the model.
+ - Each dataset is tagged with information about where it originated from and which version of the code was used to extract it( and ny related features).
+ 
+> Testing;
+ - The full Machine Learning  pipeline is integration tested.
+ - All input feature code is tested.
+ - Model specification code is unit tested.
+ - Model quality is validated before attempted to serve it.
+
+> Infrastructure;
+ - Models are tested via a shadow and /or canary process before they enter production serving environments.
+ - Monitor the model performance.
+
+> Run Through the Checklist;
+ - It's also useful to observe the links and dependencies across different best practices:
+ * Without model specification review and version control, it would be hard for reproducible training.
+ * Without reproducible training , the effectiveness and predictability of canary release are significanlty reduced.
+ * Without knowing the impact of model staleness, it's hard to implement effective monitoring.
+
+
+## Machine Learning System Architecture Approach;
+
+1. Model embedded in application.
+2. Served via a dedicated service.
+3. Model published as data (streaming)
+4. Batch prediction (offline process)
+
+>> Serving ML Models - Formats
+- Serializing the model object with pickle.
+- MLFlow (MLeap module) provides a common serialization format for exporting/importing Spark, Scikit-learn and TensorFlow Models.
+- Language-agnostic exhange formats to share models, such as PMML, PFA, and ONNX.
+
+>> Architecture 1: Embedded
+- Pre-Trained: Yes
+- Predict-on-the-fly: Yes
+- Variations : Embedded on mobile device (e.g. Core ML) , running in the browser (TensorFlow.js)
+
+>> Architecture 2: Dedicated Model API
+- Pre-Trained: Yes
+- Predict-on-the-fly: Yes
+- Variations : Many
+
+
+>> Architecture 3: Model Published as Data
+- Pre-Trained: Yes
+- Predict-on-the-fly: Yes
+- Variations : Different publish/subscribe patterns
+
+
+>> Architecture 4: Offline Predictions;
+- Pre-Trained: Yes
+- Predict-on-the-fly: No
+- Variations : Serve predictions via API, CSV, dashboards.
+
+>> Key points for Architecture Comparison;
+- Prediction
+- Prediction result delivery
+- Latency for prediction
+- System Management Difficulty
+- Model update requires deployment?
+
+
+## Machine Learning System Component Breakdown;
+
+- ML model as embedded dependency, predict on the fly.
+
+>> High Level Architecture;
+	- Evaluation Layer:
+		* The evaluation layer checks the equivalence of two models. This layer can be used to monitor production models e.g., to
+		* to check how closely the predictions on live traffic matches the training predictions.
+	- Scoring Layer:
+		* The scoring layer transforms feature into predictions. Scikit-learn is the industry standard for this layer. 
+		* Other libraries share the functionality, like Xgboost and Keras for Neural networks.
+	- Feature Layer:
+		* The feature layer is responsible for generating feature data in a transparent, reusable , and scalable manner.
+	- Data Layer:
+		* The data layer provides access to all of our data sources which simplifies the challenge of data reproducibility.
+
+>> Additional Reading Resources
+
+- Specific Challenges to Machine Learning
+	* Paper referenced in the lecture:
+
+- Hidden technical debt in machine learning systems - Google
+https://proceedings.neurips.cc/paper_files/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf
+
+- Monitoring ML models;
+https://christophergs.com/machine%20learning/2020/03/14/how-to-monitor-machine-learning-models/
+
+
+
+>> Principle for Machine Learning Systems
+The Google + Microsoft papers referenced in the lecture:
+
+"The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction" (2017) Breck et al. 
+IEEE International Conference on Big Data (Google). Download URL
+
+"Software Engineering for Machine Learning: A Case Study" (2019) Amershi et al. (Microsoft). Download URL.
+
+- Shadow Deployments.
+https://christophergs.com/machine%20learning/2019/03/30/deploying-machine-learning-applications-in-shadow-mode/
+
+- Monitoring ML models
+https://christophergs.com/machine%20learning/2020/03/14/how-to-monitor-machine-learning-models/
+
+
+>> Machine Learning Systems Architecture Approaches
+Pickle challenges:
+
+As per the Scikit-learn docs:
+
+“Since a model internal representation may be different on two different architectures,
+
+dumping a model on one architecture and loading it on another architecture is not
+
+supported.”
+
+Video, on the risks of the pickle format.
+
+https://www.youtube.com/watch?v=7KnfGDajDQw
+
+Architectures used in Different Organizations
+Advanced architecture discussions from larger companies:
+
+- Introducing FBLearner Flow: Facebook’s AI backbone
+https://engineering.fb.com/2016/05/09/core-infra/introducing-fblearner-flow-facebook-s-ai-backbone/
+
+- Scaling Machine Learning as a service: Uber’s pipeline
+https://proceedings.mlr.press/v67/li17a/li17a.pdf
+
+- Netflix on architecture for recommendation systems
+https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8
+
+- Google’s TFX Paper
+
+- Uber’s (very complex!) Michelangelo System
+https://www.uber.com/blog/michelangelo/
+
+
+>> Additional Reading Resources
+- A systems perspective to reproducibility in Production Machine Learning
+
+https://openreview.net/pdf?id=Byl4vavigX
+
+
+>> The below resources are on more advanced topics that we will not be covering in the course
+
+>> Google’s Site Reliability Engineering is one of the best references out there, it’s available for free here.
+https://sre.google/sre-book/table-of-contents/
+
+>> Martin Fowler’s testing guide is pretty comprehensive. If you are new to testing this may be overwhelming.
+https://www.martinfowler.com/testing/
+
+>> Obey the Testing Goat by Harry Percival is a good applied introduction to Test Driven Development (TDD).
+https://www.obeythetestinggoat.com/
+
+>> Advanced, narrow vs. broad integration tests.
+
+https://martinfowler.com/bliki/IntegrationTest.html
+
+
+%----------------------------- Section 4: Research Environment - Developing Machine Learning Model -------------------------------%
+## Research Environment;
+> Data Gathering
+> Feature engineering & selection
+> Model Building & Assessment
+
+- Machine Learning Pipeline;
+
+=> Database, Cloud , APIs ==> Feature Engineering, Selection, ==> Building Model ==> Scoring ==> Prediction
+
+
+## Process Overview;
+
+=> [Database, Cloud , APIs] ==> [Feature Engineering, Selection] ==> [Building Model] ==> [Scoring] ==> [Prediction]
+
+## Machine Learning Pipeline Overview;
+
+=> [Gathering Data Sources] => [Data Pre-Processing] => [Variable Selection] => [Machine Learning Model Building] => [Probability , Continues Output]
+
+## Feature Engineering - Variable Characteristic (Transformations);
+
+- Missing data (Missing values within a variable)
+- Distribution (Normal vs skewed)
+- Labels (Strings in categorical variables)
+- Outliners (Unusual or unexpected values)
+
+- Machine Learning models sensitive to feature scale:
+	* Linear and Logistic Regression
+	* Neural Network
+	* Support Vector Machines
+	* KNN
+	* K-means clustering
+	* Linear Discriminant Analysis(LDA)
+	* Principal Component Analysis (PCA)
+
+- Tree Based ML models insensitive to feature scale:
+	* Classification and Regression Trees
+	* Random Forests
+	* Gradient Boosted Trees
+
+## Feature Engineering  Techniques;
+
+* Transform Variables
+* Extract Features
+* Create New Features
+
+- Missing Data 
+	* Scikit-learn and other libraries can't work with missing data.
+
+- Missing Data Imputation Techniques:
+	* Numerical Variables - Mean/Median Imputation, Arbitary value  imputation, End of tail imputation.
+	* Categorical Variables - Frequent category imputation, Adding "missing" category.
+	* Both - Complete Case Analysis, Adding a "Missing" indicator, Random sample imputation.
+
+- Categorical Encoding Techniques
+	* Traditional techniques - [one hot encoding],[count/frequency encoding],[Ordinal/Label encoding]
+	* Monotonic relationship - [Ordered label encoding],[Mean Encoding],[Weight of evidence]
+	* Alternative techniques - [Binary encoding],[Feature hashing],[Others]
+
+-  Encoding Techniques: Rare labels (Particularly important for model deployment)
+	* Infrequent labels
+	* Group - One hot encoding of frequent categories, Grouping of rare categories.
+
+- Mathematical Transformation - [Skewed] ==> [Gaussian]
+	* Variable Transformation
+	* Logarithmic
+	* Exponential
+	* Reciprocal
+	* Box-Cox
+	* Yeo-Johnson
+
+- Discretisation: [Skewed] => [Improved value spread]
+	* Unsupervised - [Equal-width],[Equal frequency],[K means]
+	* Supervised - [Decision Trees]
+
+- Outliers
+	* Discretisation
+	* Capping/Censoring
+	* Truncation
+	
+- Feature scaling methods;
+	* standardisation
+	* Mean normalisation
+	* Scaling to Maximum and minimum
+	* Scaling to absolute maximum
+	* Scaling to median and quantiles
+	* Scaling to unit norm
+
+
+## Feature Selection;
+>> Why do we select features?
+	- Simple models are easier to interpret
+	- Shorter training times
+	- Enhanced generalisation by reducing overfitting
+	- Easier to implement by software developers -> Model production
+	- Reduced risk of data errors during model use
+	- Data redundancy
+
+>> Reducing features for model deployment
+	- Smaller json messages sent over to the model
+		* Json message contain only the necessary variables/inputs
+	- Less lines of code for error handling
+		* Error handlers need to be written for each variable/input
+	- Less information to log
+	- Less feature engineering code.
+
+>> Variable Redundancy;
+	- Constant variables - Only 1 value per variable
+	- Quasi - constant Variables - > 99% of observations show same value
+	- Duplication - Same variable multiple times in the dataset
+	- Correlation - Correlated variables provide the same information.
+	
+>> Feature Selection Methods;
+	- Embedded methods
+	- Wrapper methods
+	- Filter methods
+
+>> Filter Methods;
+	- Independent of Machine Learning algorithm
+	- Based only on variable characteristics
+
+>> Wrapper Methods;
+	- Considers Machine Learning algorithm
+	- Evaluates subsets of features
+
+>> Embedded methods:
+	- Feature selection during training of ML algorithm.
+
+
+## Training Machine Learning  Model;
+
+>> Machine learning model - Performance
+	- ROC-AUC
+		* For each probility value:
+		- How many times the model made a good assessment
+		- How many times the model made a wrong assessment
+	- Accuracy
+	- MSE, RMSE, etc.
+	
+>> Model Stacking - Meta Ensembling;
+
+	[Logit] => Prob |
+	[ RF  ] => Prob |
+	[ GBT ] => Prob | => [Meta Model] ==> [Prediction]
+	[ NN  ] => Prob |
+	[MARS ] => Prob |
+
+
+
+## Research Environment;
+- Research environment - second part
+- We are entering into the second part of this section, 
+- where we will build a machine learning pipeline to predict house price, using Python.
+
+>> Code covered in this section
+- The code for this section can be found in the "section 4" folder of our repo. See image below.
+
+https://github.com/trainindata/deploying-machine-learning-models/tree/master/section-04-research-and-development
+
+
+Python library versions;
+
+These are the versions of the libraries we use in this section:
+
+(base) C:\Users\User> conda create --name MLDeploymentEnv python=3.9
+(base) C:\Users\User> conda activate MLDeploymentEnv
+(MLDeploymentEnv) C:\Users\User> pip install jupyterlab
+(MLDeploymentEnv) C:\Users\User> conda deactivate MLDeploymentEnv
+
+
+
+python==3.9
+
+feature-engine==1.0.2
+joblib==1.0.1
+matplotlib==3.3.4
+numpy==1.20.1
+pandas==1.2.2
+scikit-learn==0.24.1
+scipy==1.6.0
+seaborn==0.10.1
+statsmodels==0.12.2
+
+
+- Newer or older versions of the libraries may break the code. 
+- So if you have trouble running the code, check the version of the libraries you have installed.
+
+
+(MLDeploymentEnv) C:\Users\User> jupyter-lab 
+(MLDeploymentEnv) C:\Users\User> jupyter-lab --notebook-dir=C:/
+
+http://localhost:8888/lab
+
+
+
+We will cover how to create environments and install specific dependencies in Section 5.
+
+
+
+## Data analysis demo - missing data
+
+https://github.com/trainindata/deploying-machine-learning-models/blob/master/section-04-research-and-development/01-machine-learning-pipeline-data-analysis.ipynb
+
+>> 1.1 Predicting Sale Price of Houses;
+>> Analysis-
+		# We will analysis following:
+		1. The target variable
+		2. Variable types (categorical and numerical)
+		3. Missing data
+		4. Numerical variables
+			* Discrete
+			* Continuous
+			* Distributions
+			* Transformations
+		5. Categorical variables
+			* Cardinality
+			* Rare Labels
+			* Special mappings
+		6. Additional Reading Resources
+		
+>> 2.2 Target
+    # Histogram to evaluate target distribution
+	- We can see that the target is continuous , and the distribution is skewed towards the right.
+	- We can improve the value spread with mathematical transformation.
+	- Now the distribution looks more Gaussian.
+	
+>> 2.3 Variable Types
+	# Let's Identify the categorical and numerical variables.
+	
+>> 3 Missing values
+	# Let's go ahead and find out which variables of the dataset contain missing values
+	- Our dataset contains a few variables with a big proportion of missing values(4 variables at the top). 
+	- And some other variables with a small percentage of missing observations
+	- This means that to train a machine learning model with this data set, we need to impute the missing data in these variables.
+	- We can also visualize the percentage of missing values in the variables as follows;
+
+>> 3.1 Relationship between missing data and Sale Price;
+	# Let's evaluate the price of the house in those observations where the information is missing.
+	# We will do this for each variables that shows missing data.
+	
+
+
+## Data analysis demo - temporal variables
+> 4.1 Temporal variables;
+ # We have 4 years variables in the datasets
+ - YearBuilt: year in which the house was built
+ - YearRemodAdd: year in which house was remodeled
+ - GarageYrBlt: year in which a garage was built
+ - YrSold: year in which the house was sold.
+
+## Data analysis demo - numerical variables
+
+# 4.3.2  - Logarithmic Transformation
+
+## Data analysis demo - categorical variables
+
+## Feature engineering demo 1;
+
+- Reproducibility : Setting the seed.
+- Ensure reproducibility between runs of the same notebook, but also between the research and production environment.
+- For each step that includes some element of randomness, it is extremely important that we set the seed.
+
+>> In the followinng cells , we will engineer the variables of the House Price Dataset so that we tackle:
+- Missing values
+- Temporal variables
+- Non-Gaussian distributed variables
+- Categorical variables: remove rare labels
+- Categorical variables: convert string to numbers
+- Standardize the values of variables to same range.
+
+> 4.2.2 Numerical variables
+- To engineer missing values in numerical variables, we will;
+	* add binary missing indicator variable
+	* and then replace the missing values in the original variable with the mean
+
+> 4.4 Numerical Variable Transformation 
+	- The numerical variables are not normally distrubuted
+	- Transform with the logarithmic the positive numerical variables in order to get a more Gaussian-like distribution.
+
+> 4.5.3 Encoding of categorical variables
+	- we need to transform the strings of the categorical variables into numbers
+	- So, that we can capture the monotonic relationship between the label and the target.
+	
+> 4.6 Feature Scaling
+	- For use in linear models, feature need to be either scaled. we scale features to the minimum and maximum values.
+	
+
+## Feature Selection
+> 1.1 - Reproducibility : Setting the seed
+	* Aim is to ensure reproducibility between runs of the same notebook, but also between the research and production environment. 
+	* for each step that includes some element of randomness, it is extremely important that we set the seed.
+
+
+## Model Training;
+	- Reproducibility: Setting the seed
+	- The distribution of the error follows quite closely a gaussian distribution. That suggests that our model is doing a good job. 
+	
+
+# Research Environment;
+
+## Streamlining Machine Learning Pipelines with Open Source
+
+- Scikit-learn
+	* Solid implementation of wide range of machine learning algorithms and data transformation
+	* Clean, uniform and streamline API
+	* implemes new algorithm - Transformers , Estimators, Pipeline
+	* 
+
+# Scikit-learn - Estimators
+	- Estimators - A class fit() and predict() methods. It fits and predicts.
+	- Any ML algorithm like Lasso, Decision trees, SVMs are coded as estimators with Scikit-learn.
+
+# Scikit-learn - Transformers
+	- Transformers - class that have fit()and transform() methods.
+	- It transforms data; 
+		* Scalers
+		* Feature selectors
+		* Encoders
+		* Imputers
+		* Discretizers
+		* Transformers
+	
+
+# Scikit-learn - Pipeline
+	- Pipeline - class that allows to run transformers and estimators in sequence.
+		* Most steps are Transformers
+		* Last step can be an Estimator
+	
+# Pipeline - Its gives you single interface for all 3 steps of transformation and resulting estimator. 
+		   - It encapsulates transformers and predictors inside.
+		   - Pipeline class allows to run transformers and estimators in sequence.
+		   * Most steps are Transformers
+		   * Last step can be an Estimator
+		   
+# Open-source for Feature Engineering
+	- Scikit-learn
+	- Category Encoders
+	- Feature-engine
+	- Featuretools
+	- imbalanced learn
+
+# Open-source for Feature Selection
+	- Scikit-learn
+	- Feature-engine
+	- MLxtend
+
+
+# Open-source for Model Training
+	- Scikit-learn
+	- Keras
+	- MLxtend
+	- Py-earth
+	- xgboost
+	- Lasagne
+	- Many Others
+	
+
+## Open Source for Feature Engineering
+
+	# Scikit-learn
+	- Missing Data Imputation
+		* SimpleImputer
+		* IterativeImputer
+		
+	- Categorical Variable Encoding
+		* OneHotEncoder
+		* OrdinalEncoder
+		
+	- Scalers
+		* Standard Scaler
+		* MinMaxScaler
+		* Robust Scaler
+		* A few others
+	
+	- Discretisation
+		* KBinsDiscretizer
+		
+	- Variable Transformation
+		* PowerTransformer
+		* FunctionTransformer
+		
+	- Variable Combination
+		* Polynomial Features
+		
+	- Text
+		* Word Count
+		* TFiDF
+	
+
+## Create in-house software using Scikit-learn API
+	# Different steps if ML pipeline;
+		- Learn parameters from data
+		- Use those parameters to make transformations or predictions
+		
+	# Procedural Programming in ML
+		- Code:
+				* Learn the parameters
+				* Make the transformations
+				* Make the predictions
+		- Data:
+				* Store the parameters
+				* Mean values, regression coefficients , etc.
+	
+# Scikit-learn API documentation;
+	- https://scikit-learn.org/stable/modules/classes.html
+	* base.BaseEstimator
+	* base.TransformerMixin
+
+
+## Feature selection in the pipeline;
+
+- If deploying for the first time,
+	* Plus
+		- We don't have to hard code the predictive features
+	* However,
+		- Need to deploy code to engineer all features in the dataset
+		- Error handling and unit testing for all the code to engineering features.
+
+- What if we re-train our model frequently?
+	* Advantages,
+		- Can quickly retrain a model on the same input data
+		- No need to hard-cpde the new set of predictive features after each re-training.
+	
+	* Disadvantages
+		- Lack of data versatility
+		- No additional data can be fed through the pipeline.
+
+
+- Feature selection in the pipeline;
+	* Suitable:
+		- Model build and refreshed on same data
+		- Model build and refreshed on smaller datasets
+	
+	* No suitable,
+		- If model built using datasets with a high feature space
+		- If model constantly enriched iwth new data sources.
+	
+
+--------------------- Additonal notes ----------
+
+#--------- Bonus: Additional Resources on Scikit-Learn --------
+
+## Scikit-Learn and sklearn pipeline: Additional reading resources
+
+- Introduction to Scikit-Learn
+
+- Six reasons why I recommend Scikit-Learn
+
+- Why you should learn Scikit-Learn
+
+- Deep dive into SKlearn pipelines from Kaggle
+
+- SKlearn pipeline tutorial from Kaggle
+
+- Managing Machine Learning workflows with Sklearn pipelines
+
+- A simple example of pipeline in Machine Learning using SKlearn
+
+
+
+## Where can I learn more about feature engineering?
+
+- Feature Engineering for Machine Learning: A Comprehensive Overview
+
+- Best Resources to Learn about Feature Engineering for Machine Learning
+
+- Practical Code Implementation of Feature Engineering Techniques with Python
+
+
+## Where can I learn more about feature selection?
+
+- Feature Selection for Machine Learning: A comprehensive Overview
+
+
+## Where can I learn more about machine learning?
+
+- Resources to learn more about Machine Learning
+
+
+## Become a better python developer
+
+- We have gathered the following resources for data scientists who want to learn best practices in python programming.
+
+- The Best of the Best Practices (BOBP) Guide for Python
+
+- Python coding standards/best practices in Stackoverflow
+
+- Python Best Practices for More Pythonic Code
+
+- The Hitchhickers guide to python
+
+- Tutorials for pycharm here and here.
+
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M master
+git remote add origin https://github.com/jnybrahma/MLModelDevelopment.git
+git push -u origin master
+
+
+%----------------------------- Section 5: Packaging The Model for Production -------------------------------%
+
+- Package the Model
+- Create a Model API
+- Deploy to PaaS
+- Testing
+
+
+
+%----------------------------- Section 6: Serving and Deploying Model Via REST API-------------------------------%
+
+
+
+
+%----------------------------- Section 7: Continuose Integration and Deployment Pipeline -------------------------------%
+
+
+
+
+%----------------------------- Section 8: Deploying ML API with Containers -------------------------------%
+
+
+
+
+%----------------------------- Section 9: Differential Testing -------------------------------%
+
+
+
+
+
+
+%----------------------------- Section 10: Deploying to IaaS (AWS ECS)  -------------------------------%
+
+
+
+
+
+%----------------------------- Section 11: Deep Learning Model with Big Data -------------------------------%
+
+
+
+
+
+
+%----------------------------- Section 12: Common Issue found during deployment -------------------------------%
+
+
+
+
+
+
+
+%----------------------------- Section 13: Serving Model Via REST API -------------------------------%
+
+
+
+
+
+
+
+
+
+
+
